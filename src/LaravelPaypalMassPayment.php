@@ -68,8 +68,6 @@ class LaravelPaypalMassPayment {
 
         }
 
-        dd($paymentString);
-
         $this->executePayment($paymentString);
 
     }    
