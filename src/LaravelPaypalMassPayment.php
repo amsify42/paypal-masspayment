@@ -68,6 +68,8 @@ class LaravelPaypalMassPayment {
 
         }
 
+        dd($paymentString);
+
         $this->executePayment($paymentString);
 
     }    
@@ -293,7 +295,7 @@ class LaravelPaypalMassPayment {
         $configVal = Config::get('paypal-masspayment.'.$var);
 
         if($configVal != '') {
-           return strtolower($configVal); 
+           return $configVal; 
         }
 
         return $this->$var;
