@@ -64,9 +64,13 @@ class LaravelPaypalMassPayment {
 
         foreach($receiversArray as $i => $receiverData) {
 
-         $paymentString  .= $this->createPaymentString($receiverData, $i)
+         $paymentString  .= $this->createPaymentString($receiverData, $i);
 
         }
+
+        dd($paymentString);
+
+        $this->executePayment($paymentString);
 
     }    
 
@@ -187,12 +191,12 @@ class LaravelPaypalMassPayment {
 
          $receiverType   = $this->getReceiverType($this->receiver_type, $i);
 
-         $receiverInfo   = urlencode($receiverData[$receiverType['type']]);
-         $amount         = urlencode($receiverData['amount']);
-         $uniqueID       = urlencode($receiverData['uniqueID']);
-         $note           = urlencode($receiverData['note']);
+         $receiverEmail  = urlencode($receiverData[$receiverType['type']]);
+         $amount         = urlencode($receiverData['Amount']);
+         $uniqueID       = urlencode($receiverData['UniqueId']);
+         $note           = urlencode($receiverData['Note']);
 
-         $paymentString .= '&'.$receiverType['param'].'='.$receiverEmail;
+         $paymentString  = '&'.$receiverType['param'].'='.$receiverEmail;
          $paymentString .= '&'.$this->filterParam('amount', $i).'='.$amount;
          $paymentString .= '&'.$this->filterParam('uniqueid', $i).'='.$uniqueID;
          $paymentString .= '&'.$this->filterParam('note', $i).'='.$note;
