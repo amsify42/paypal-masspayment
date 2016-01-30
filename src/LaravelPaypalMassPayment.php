@@ -41,6 +41,8 @@ class LaravelPaypalMassPayment {
         $this->api_password     = $this->getCredential('api_password');
         $this->api_certificate  = $this->getCredential('api_certificate');
         $this->api_signature    = $this->getCredential('api_signature');
+
+        dd($this->operation_type);
     }
 
 
@@ -67,8 +69,6 @@ class LaravelPaypalMassPayment {
          $paymentString  .= $this->createPaymentString($receiverData, $i);
 
         }
-
-        dd($paymentString);
 
         $this->executePayment($paymentString);
 
@@ -292,7 +292,7 @@ class LaravelPaypalMassPayment {
 
     private function getConfig($var) {
 
-        $configVal = Config::get('paypal-masspayment.'.$var);
+        $configVal = Config::get('paypalmasspayment.'.$var);
 
         if($configVal != '') {
            return $configVal; 
@@ -308,7 +308,7 @@ class LaravelPaypalMassPayment {
 
         $environment = strtolower($this->environment);
         if($environment == 'sandbox' || $environment == 'live') {
-            $configVal = Config::get('paypal-masspayment.'.$this->environment.'.'.$var);
+            $configVal = Config::get('paypalmasspayment.'.$this->environment.'.'.$var);
 
             if($configVal != '') {
             return $configVal; 
