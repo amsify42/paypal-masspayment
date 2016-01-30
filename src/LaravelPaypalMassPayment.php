@@ -70,7 +70,7 @@ class LaravelPaypalMassPayment {
 
         }
 
-        $this->executePayment($paymentString);
+        return $this->executePayment($paymentString);
 
     }    
 
