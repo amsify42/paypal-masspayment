@@ -4,12 +4,14 @@ namespace   Amsify42\PaypalMassPayment;
 use 	    Illuminate\Support\ServiceProvider;
 
 class PaypalMassPaymentServiceProvider extends ServiceProvider {
-
+	
+	protected $defer = false;
+	
 	public function boot() {
 		// this  for conig
 		$this->publishes([
 				__DIR__.'/config/paypalmasspayment.php' => config_path('paypalmasspayment.php'),
-		], 'public' );
+		], 'config' );
 	}
 
 	public function register() {
