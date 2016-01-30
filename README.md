@@ -47,7 +47,7 @@ Now file with name paypalmasspayment.php will be copied in directory Config/ and
 #### For what to use in all the options available in this config file go to [Using the Mass Payments API](https://developer.paypal.com/docs/classic/mass-pay/integration-guide/MassPayUsingAPI/)
 
 
-### Add this line at the top of any class to use Test5
+### Add this line at the top of any class to use PaypalMassPayment
 
 ```php
 use       PaypalMassPayment;
