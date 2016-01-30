@@ -42,7 +42,6 @@ class LaravelPaypalMassPayment {
         $this->api_certificate  = $this->getCredential('api_certificate');
         $this->api_signature    = $this->getCredential('api_signature');
 
-        dd($this->operation_type);
     }
 
 
@@ -107,6 +106,9 @@ class LaravelPaypalMassPayment {
 
     private function getCurlHttpResponse($API_Endpoint, $paymentString) {
 
+        // Set the API operation, version, and API signature in the request.
+         $requestString = $this->generateRequestURL($this->method_name, $paymentString);
+
         // Set the curl parameters.
          $ch = curl_init();
          curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
@@ -124,11 +126,8 @@ class LaravelPaypalMassPayment {
          curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
          curl_setopt($ch, CURLOPT_POST, 1);
 
-         // Set the API operation, version, and API signature in the request.
-         $requestString = $this->generateRequestURL($this->method_name, $paymentString);
-
          // Set the request as a POST FIELD for curl.
-         curl_setopt($ch, CURLOPT_POSTFIELDS, $requestString."&".$paymentString);
+         curl_setopt($ch, CURLOPT_POSTFIELDS, $requestString);
 
          // Get response from the server.
          $httpResponse = curl_exec($ch);
@@ -149,7 +148,7 @@ class LaravelPaypalMassPayment {
             $str .= '&SIGNATURE='.urlencode($this->api_signature);                
             } 
             
-            return $str;
+            return $str.'&'.$paymentString;
     }
 
 
