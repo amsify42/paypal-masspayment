@@ -8,14 +8,14 @@ class PaypalMassPaymentServiceProvider extends ServiceProvider {
 	public function boot() {
 		// this  for conig
 		$this->publishes([
-				__DIR__.'/config/paypal-masspayment.php' => config_path('paypal-masspayment.php'),
+				__DIR__.'/config/paypalmasspayment.php' => config_path('paypalmasspayment.php'),
 		]);
 	}
 
 	public function register() {
 		$this->registerPaypalPayment();
 		config([
-				'config/paypal-masspayment.php',
+				'config/paypalmasspayment.php',
 			  ]);
 	}
 
