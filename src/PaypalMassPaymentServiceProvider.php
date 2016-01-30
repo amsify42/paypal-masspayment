@@ -9,7 +9,7 @@ class PaypalMassPaymentServiceProvider extends ServiceProvider {
 		// this  for conig
 		$this->publishes([
 				__DIR__.'/config/paypalmasspayment.php' => config_path('paypalmasspayment.php'),
-		]);
+		], 'public' );
 	}
 
 	public function register() {
