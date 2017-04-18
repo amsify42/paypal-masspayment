@@ -2,7 +2,7 @@
     "name": "amsify42/paypal-masspayment",
     "description": "This is a laravel 5 package for simply executing mass payment of paypal",
     "keywords": ["paypal","mass payment","payment", "laravel", "amsify42"],
-    "homepage": "https://github.com/amsify42/test5.git",
+    "homepage": "https://github.com/amsify42/paypal-masspayment.git",
     "license": "MIT",
     "authors": [
         {
