@@ -365,7 +365,7 @@ class LaravelPaypalMassPayment {
             }
         }  
 
-        if($type == 'phone' && $this->environment == 'live') {
+        if($type == 'phone') {
             $receiverType['type']       = 'ReceiverPhone';
             if($this->operation_type == 'soap') {
                 $receiverType['param']  = 'ReceiverPhone';
