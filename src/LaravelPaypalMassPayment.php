@@ -4,50 +4,138 @@ use       Config;
 
 class LaravelPaypalMassPayment {
 
-    private $authentication   = 'api_signature';
+    /**
+     * Authentication
+     */
+    private $authentication     = 'api_signature';
 
-    private $environment      = 'sandbox';
+    /**
+     * Envorenment: live or sandbox
+     */
+    private $environment        = 'sandbox';
 
-    private $operation_type   = 'nvp';
+    /**
+     * Operation Type
+     */
+    private $operation_type     = 'nvp';
 
-    private $api_vesion       = '51.0';
+    /**
+     * API Version
+     */
+    private $api_version        = '51.0';
 
-    private $receiver_type    = 'email';
+    /**
+     * Receiver Type
+     */
+    private $receiver_type      = 'email';
 
-    private $currency         = 'USD';
+    /**
+     * Currency
+     */
+    private $currency           = 'USD';
 
-    private $api_username     = '';
+    /**
+     * API Username
+     */
+    private $api_username       = '';
 
-    private $api_password     = '';
+    /**
+     * API Password
+     */
+    private $api_password       = '';
 
-    private $api_certificate  = '';
+    /**
+     * API Certificate
+     */
+    private $api_certificate    = '';
 
-    private $api_signature    = '';
+    /**
+     * API Signature
+     */
+    private $api_signature      = '';
 
+    /**
+     * Request String
+     */
+    private $requestString      = '';
 
-    private $method_name      = 'MassPay';
+    /**
+     * Config
+     */
+    private $config             = array();  
 
+    /**
+     * Method Name
+     */
+    private $methodName         = 'MassPay';
 
+    /**
+     * Set all values from config
+     */
     function  __construct() {
-        $this->authentication   = $this->getConfig('authentication');
-        $this->environment      = $this->getConfig('environment');
-        $this->operation_type   = $this->getConfig('operation_type');
-        $this->api_vesion       = $this->getConfig('api_vesion');
-        $this->receiver_type    = $this->getConfig('receiver_type');
-        $this->currency         = $this->getConfig('currency');
+        $this->setConfigVar('authentication');
+        $this->setConfigVar('environment');
+        $this->setConfigVar('operation_type');
+        $this->setConfigVar('api_version');
+        $this->setConfigVar('receiver_type');
+        $this->setConfigVar('currency');
 
-
-        $this->api_username     = $this->getCredential('api_username');
-        $this->api_password     = $this->getCredential('api_password');
-        $this->api_certificate  = $this->getCredential('api_certificate');
-        $this->api_signature    = $this->getCredential('api_signature');
-
+        $this->setCredential('api_username');
+        $this->setCredential('api_password');
+        $this->setCredential('api_certificate');
+        $this->setCredential('api_signature');
     }
 
+    /**
+     * Set custom config
+     * @param array $config
+     * @return object $this
+     */
+    public function setConfig($config = array()) {
+        if(sizeof($config) > 0) {
+            $this->config  = $config;
+            $this->setConfigVar('authentication', true);
+            $this->setConfigVar('environment', true);
+            $this->setConfigVar('operation_type', true);
+            $this->setConfigVar('api_version', true);
+            $this->setConfigVar('receiver_type', true);
+            $this->setConfigVar('currency', true);
 
+            $this->setCredential('api_username', true);
+            $this->setCredential('api_password', true);
+            $this->setCredential('api_certificate', true);
+            $this->setCredential('api_signature', true);
+        }
+        return $this;
+    }
 
+    /**
+     * Print Config
+     */
+    public function printConfig() {
+        echo '<table>';
+        echo '<tr><td style="font-weight:bold;">authentication:</td><td>'.$this->authentication.'</td></tr>';
+        echo '<tr><td style="font-weight:bold;">environment:</td><td>'.$this->environment.'</td></tr>';
+        echo '<tr><td style="font-weight:bold;">operation_type:</td><td>'.$this->operation_type.'</td></tr>';
+        echo '<tr><td style="font-weight:bold;">api_version:</td><td>'.$this->api_version.'</td></tr>';
+        echo '<tr><td style="font-weight:bold;">receiver_type:</td><td>'.$this->receiver_type.'</td></tr>';
+        echo '<tr><td style="font-weight:bold;">currency:</td><td>'.$this->currency.'</td></tr>';
+        echo '<tr><td></td><td></td></tr>';
+        echo '<tr><td style="font-weight:bold;">api_username:</td><td>'.$this->api_username.'</td></tr>';
+        echo '<tr><td style="font-weight:bold;">api_password:</td><td>'.$this->api_password.'</td></tr>';
+        echo '<tr><td style="font-weight:bold;">api_certificate:</td><td>'.$this->api_certificate.'</td></tr>';
+        echo '<tr><td style="font-weight:bold;">api_signature:</td><td>'.$this->api_signature.'</td></tr>';
+        echo '</table>';
+    }
+
+    /**
+     * Execute mass payment
+     * @param  string $emailSubject
+     * @param  array $paymentArray
+     * @return array
+     */
     public function executeMassPay($emailSubject, $paymentArray) {
-
+        
         $receiversLenght = count($paymentArray);
 
         // Add request-specific fields to the request string.
@@ -56,58 +144,60 @@ class LaravelPaypalMassPayment {
         $paymentString  .= '&CURRENCYCODE='.$this->currency;
 
         $receiversArray  = array();
-
         for($i = 0; $i < $receiversLenght; $i++) {
-
-         $receiversArray[$i] = $paymentArray[$i];
-
+            $receiversArray[$i] = $paymentArray[$i];
         }
 
         foreach($receiversArray as $i => $receiverData) {
-
-         $paymentString  .= $this->createPaymentString($receiverData, $i);
-
+            $paymentString .= $this->createPaymentString($receiverData, $i);
         }
 
         return $this->executePayment($paymentString);
 
     }    
 
-
-
+    /**
+     * Execute Payment
+     * @param  string $paymentString
+     * @return array
+     */
     private function executePayment($paymentString) {
 
+        $API_Endpoint = $this->generateEndPointURL();
+        $httpResponse = $this->getCurlHttpResponse($API_Endpoint, $paymentString);
 
-         $API_Endpoint = $this->generateEndPointURL();
-         $httpResponse = $this->getCurlHttpResponse($API_Endpoint, $paymentString);
+        if(!$httpResponse){
+            echo $this->methodName . ' failed: ' . curl_error($ch) . '(' . curl_errno($ch) .')';
+        }
 
-         if(!$httpResponse){
-          echo $this->method_name . ' failed: ' . curl_error($ch) . '(' . curl_errno($ch) .')';
-         }
+        // Extract the response details.
+        $httpResponseAr       = explode("&", $httpResponse);
+        $httpParsedResponseAr = array();
 
-         // Extract the response details.
-         $httpResponseAr       = explode("&", $httpResponse);
-         $httpParsedResponseAr = array();
+        foreach ($httpResponseAr as $i => $value){
+            $tmpAr = explode("=", $value);
+            if(sizeof($tmpAr) > 1){
+                $httpParsedResponseAr[$tmpAr[0]] = $tmpAr[1];
+            }
+        }
 
-         foreach ($httpResponseAr as $i => $value){
-          $tmpAr = explode("=", $value);
-          if(sizeof($tmpAr) > 1){
-           $httpParsedResponseAr[$tmpAr[0]] = $tmpAr[1];
-          }
-         }
+        if((0 == sizeof($httpParsedResponseAr)) || !array_key_exists('ACK', $httpParsedResponseAr)){
+            throw new \Exception("Invalid HTTP Response for POST request(".$this->requestString.") to ".$API_Endpoint);
+        }
 
-         if((0 == sizeof($httpParsedResponseAr)) || !array_key_exists('ACK', $httpParsedResponseAr)){
-          exit("Invalid HTTP Response for POST request({$requestString}) to $API_Endpoint.");
-         }
-         
-         return $httpParsedResponseAr;
+        return $httpParsedResponseAr;
     }
 
-
+    /**
+     * Curl paypal call
+     * @param  string $API_Endpoint
+     * @param  string $paymentString
+     * @return object
+     */
     private function getCurlHttpResponse($API_Endpoint, $paymentString) {
 
         // Set the API operation, version, and API signature in the request.
-         $requestString = $this->generateRequestURL($this->method_name, $paymentString);
+         $this->requestString = $this->generateRequestURL($this->methodName, $paymentString);
 
         // Set the curl parameters.
          $ch = curl_init();
@@ -127,7 +217,7 @@ class LaravelPaypalMassPayment {
          curl_setopt($ch, CURLOPT_POST, 1);
 
          // Set the request as a POST FIELD for curl.
-         curl_setopt($ch, CURLOPT_POSTFIELDS, $requestString);
+         curl_setopt($ch, CURLOPT_POSTFIELDS, $this->requestString);
 
          // Get response from the server.
          $httpResponse = curl_exec($ch);
@@ -135,23 +225,31 @@ class LaravelPaypalMassPayment {
          return $httpResponse;
     }
 
+    /**
+     * create request url
+     * @param  string $methodName
+     * @param  string $paymentString
+     * @return string
+     */
+    private function generateRequestURL($methodName, $paymentString) {
 
-    private function generateRequestURL($method_name, $paymentString) {
+        $str  = 'METHOD='.$methodName;
+        $str .= '&VERSION='.urlencode($this->api_version);
+        $str .= '&PWD='.urlencode($this->api_password);
+        $str .= '&USER='.urlencode($this->api_username);
 
-            $str  = 'METHOD='.$method_name;
-            $str .= '&VERSION='.urlencode($this->api_vesion);
-            $str .= '&PWD='.urlencode($this->api_password);
-            $str .= '&USER='.urlencode($this->api_username);
-
-            // If the authentication type is api_signature
-            if($this->authentication == 'api_signature') {
+        // If the authentication type is api_signature
+        if($this->authentication == 'api_signature') {
             $str .= '&SIGNATURE='.urlencode($this->api_signature);                
-            } 
+        } 
             
-            return $str.'&'.$paymentString;
+        return $str.'&'.$paymentString;
     }
 
-
+    /**
+     * Generate Endpoint URL
+     * @return string
+     */
     private function generateEndPointURL() {
 
         $endpoint_url    = 'https://api';
@@ -185,7 +283,12 @@ class LaravelPaypalMassPayment {
     }
 
 
-
+    /**
+     * Create Payment String
+     * @param  array $receiverData
+     * @param  integer $i
+     * @return string
+     */
     private function createPaymentString($receiverData, $i) {
 
          $receiverType   = $this->getReceiverType($this->receiver_type, $i);
@@ -203,118 +306,123 @@ class LaravelPaypalMassPayment {
          return $paymentString;
     }
 
-
+    /**
+     * Filter Param
+     * @param  string $param
+     * @param  integer $i
+     * @return string
+     */
     private function filterParam($param, $i) {
 
         $setParam = '';
 
         if($param == 'amount') {
-
             if($this->operation_type == 'soap') {
                 $setParam = 'Amount';
             } else {
                 $setParam = 'L_AMT'.$i;
             }
-
         }
 
         if($param == 'uniqueid') {
-
             if($this->operation_type == 'soap') {
                 $setParam = 'UniqueId';
             } else {
                 $setParam = 'L_UNIQUEID'.$i;
             }
-            
         }
 
         if($param == 'note') {
-
             if($this->operation_type == 'soap') {
                 $setParam = 'Note';
             } else {
                 $setParam = 'L_NOTE'.$i;
             }
-            
         }
 
         return $setParam;
 
     }
 
-
-
+    /**
+     * Get Receiver Type
+     * @param  string $type
+     * @param  integer $i
+     * @return array
+     */
     private function getReceiverType($type, $i) {
 
-          $receiverType          = array();  
-          $receiverType['type']  = '';
-          $receiverType['param'] = '';
+        $receiverType          = array();  
+        $receiverType['type']  = '';
+        $receiverType['param'] = '';
 
-          if($type == 'email') {
-            $receiverType['type']  = 'ReceiverEmail';
-
+        if($type == 'email') {
+            $receiverType['type']       = 'ReceiverEmail';
             if($this->operation_type == 'soap') {
-                $receiverType['param'] = 'ReceiverEmail';
+                $receiverType['param']  = 'ReceiverEmail';
             } else {
-                $receiverType['param'] = 'L_EMAIL'.$i;
+                $receiverType['param']  = 'L_EMAIL'.$i;
             }
+        }  
 
-          }  
-
-          if($type == 'phone' && $this->environment == 'live') {
-            $receiverType['type']  = 'ReceiverPhone';
-
+        if($type == 'phone' && $this->environment == 'live') {
+            $receiverType['type']       = 'ReceiverPhone';
             if($this->operation_type == 'soap') {
-                $receiverType['param'] = 'ReceiverPhone';
+                $receiverType['param']  = 'ReceiverPhone';
             } else {
-                $receiverType['param'] = 'L_RECEIVERPHONE'.$i;
+                $receiverType['param']  = 'L_RECEIVERPHONE'.$i;
             }
+        }  
 
-          }  
-
-          if($type == 'id') {
-            $receiverType['type']  = 'ReceiverID';
-            
+        if($type == 'id') {
+            $receiverType['type']       = 'ReceiverID';
             if($this->operation_type == 'soap') {
-                $receiverType['param'] = 'ReceiverID';
+                $receiverType['param']  = 'ReceiverID';
             } else {
-                $receiverType['param'] = 'L_RECEIVERID'.$i;
+                $receiverType['param']  = 'L_RECEIVERID'.$i;
             }
+        }
 
-          }
-
-          return $receiverType;  
+        return $receiverType;  
        
     }
 
-
-
-    private function getConfig($var) {
-
+    /**
+     * Set Config Variable in object context
+     * @param string  $var
+     * @param boolean $custom
+     */
+    private function setConfigVar($var, $custom = false) {
         $configVal = Config::get('paypalmasspayment.'.$var);
-
-        if($configVal != '') {
-           return $configVal; 
+        if($configVal) {
+           if($custom) {
+                if(isset($this->config[$var]))
+                $this->$var = $this->config[$var];
+           } else {
+                $this->$var = $configVal;
+           }
         }
-
-        return $this->$var;
     }
 
-
-    private function getCredential($var) {
-
+    /**
+     * Set Credential in object context
+     * @param string  $var
+     * @param boolean $custom
+     */
+    private function setCredential($var, $custom = false) {
         $configVal = '';
-
         $environment = strtolower($this->environment);
         if($environment == 'sandbox' || $environment == 'live') {
             $configVal = Config::get('paypalmasspayment.'.$this->environment.'.'.$var);
-
-            if($configVal != '') {
-            return $configVal; 
+            if($configVal) {
+                if($custom) {
+                    if(isset($this->config[$this->environment][$var]))
+                    $this->$var = $this->config[$this->environment][$var];
+                } else {
+                    $this->$var = $configVal;
+                }
             }
         }
-
-        return $configVal;
     }
 
 }

@@ -80,3 +80,43 @@ $response = PaypalMassPayment::executeMassPay('Some Subject', $receivers);
 $response = \PaypalMassPayment::executeMassPay('Some Subject', $receivers);
 ```
 #### For response codes and errors visit [MassPay Error Codes](https://developer.paypal.com/docs/classic/mass-pay/integration-guide/MassPayUsingAPI/#id101DEN0B0E9) 
+
+### Passing custom config at run time for particular object context
+```php
+$config = [
+    'authentication'    => 'api_signature',
+    'environment'       => 'sandbox',
+    'operation_type'    => 'nvp',
+    'api_vesion'        => '51.0',
+    'receiver_type'     => 'email',
+    'currency'          => 'USD',
+    'sandbox' => [
+		        'api_username'    => 'random-facilitator_api1.gmail.com',
+		        'api_password'    => 'FKJHS786JH3454',
+		        'api_certificate' => '',
+		        'api_signature'   => 'sdfrfsf3rds3435432545df3124dg34tDFG#$sG23rfSD3',
+	   ],
+    'live' => [
+		       'api_username'    => '',
+		       'api_password'    => '',
+		       'api_certificate' => '',    
+		       'api_signature'   => '',
+		],
+];
+$payment    = PaypalMassPayment::setConfig($config);
+$response   = $payment->executeMassPay('Some Subject', $receivers);
+```
+### You can also pass just required keys to custom config
+```php
+$config = [
+    'environment'       => 'live',
+    'live' => [
+		       'api_username'    => '',
+		       'api_password'    => '',
+		       'api_certificate' => '',    
+		       'api_signature'   => '',
+		],
+];
+$payment    = PaypalMassPayment::setConfig($config);
+$response   = $payment->executeMassPay('Some Subject', $receivers);
+```

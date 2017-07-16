@@ -56,7 +56,7 @@ return [
 
                 /*
                 * If you set authentication as 'api_certificate' then you must enter 'api_certificate' here
-                * If it is 'api_certificate' you must give proper to cert_key_pem.txt file
+                * If it is 'api_certificate' you must give proper path to cert_key_pem.txt file
                 */
 		        'api_certificate' => '',
 
@@ -71,7 +71,7 @@ return [
      * You can set API Username and API Password here
 
      * If you set authentication as 'api_certificate' then you must enter 'api_certificate' here
-     * If it is 'api_certificate' you must give proper to cert_key_pem.txt file
+     * If it is 'api_certificate' you must give proper path to cert_key_pem.txt file
 
      * If you set authentication as 'api_signature' then you must enter 'api_signature' here
      */
@@ -83,7 +83,7 @@ return [
 
                /*
                 * If you set authentication as 'api_certificate' then you must enter 'api_certificate' here
-                * If it is 'api_certificate' you must give proper to cert_key_pem.txt file
+                * If it is 'api_certificate' you must give proper path to cert_key_pem.txt file
                 */
 		       'api_certificate' => '',
 
