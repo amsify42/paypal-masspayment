@@ -1,4 +1,6 @@
-[![Downloads](https://poser.pugx.org/amsify42/paypal-masspayment/downloads)](https://packagist.org/packages/amsify42/paypal-masspayment) 
+[![Latest Stable Version](https://poser.pugx.org/amsify42/paypal-masspayment/v/stable)](https://packagist.org/packages/amsify42/paypal-masspayment)
+[![Total Downloads](https://poser.pugx.org/amsify42/paypal-masspayment/downloads)](https://packagist.org/packages/amsify42/paypal-masspayment)
+[![Latest Unstable Version](https://poser.pugx.org/amsify42/paypal-masspayment/v/unstable)](https://packagist.org/packages/amsify42/paypal-masspayment)
 [![License](https://poser.pugx.org/amsify42/paypal-masspayment/license)](https://packagist.org/packages/amsify42/paypal-masspayment)
 
 ## Paypal Mass Payment for Laravel 5
@@ -7,6 +9,11 @@
 
 Installation:
 
+```txt
+composer require amsify42/paypal-masspayment
+```
+[OR]
+<br/>
 Add the PaypalMassPayment package to your `composer.json` file
 
 ```json
