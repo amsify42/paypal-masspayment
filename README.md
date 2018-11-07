@@ -1,4 +1,5 @@
-
+[![Downloads](https://poser.pugx.org/amsify42/paypal-masspayment/downloads)](https://packagist.org/packages/amsify42/paypal-masspayment) 
+[![License](https://poser.pugx.org/amsify42/paypal-masspayment/license)](https://packagist.org/packages/amsify42/paypal-masspayment)
 
 ## Paypal Mass Payment for Laravel 5
 ### This is a laravel 5 package only for PayPal Mass Payment.
